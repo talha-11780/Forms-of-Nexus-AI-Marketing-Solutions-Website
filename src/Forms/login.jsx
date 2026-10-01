@@ -9,7 +9,7 @@ function Login(){
  <div className="card p-4 login-card" style={{maxWidth: "420px", width: "100%"}}>
 
 {/* Heading */}
-    <h2 className="text-center mb-2">Get Your Free AI Growth Plan</h2>
+    <h2 className="text-center mb-2">Get Your AI Growth Plan</h2>
 <p className="text-center text-muted mb-4">Takes 60 seconds. We’ll analyze your business and send you a personalized AI automation roadmap within 24 hours.</p>
 
 {/* Email */}
@@ -28,7 +28,7 @@ function Login(){
 {/* Checkbox */}
   <div className="mb-3 form-check">
   <input type="checkbox" className="form-check-input" id="exampleCheck1"/>
-  <label className="form-check-label" htmlFor="exampleCheck1">Check me out</label>
+  <label className="form-check-label" htmlFor="exampleCheck1">Remember me</label>
 </div>
 
 {/* Button */}
