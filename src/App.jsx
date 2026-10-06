@@ -13,17 +13,21 @@ import BookFreeCall from "./Forms/BookFreeCall.jsx";
 
 function App()
 { 
-return < Login/>
-// return <Registration/>
-// return <ContactUs/>
-// return <Feedback/>
-// return <CompaignCreation/>
-// return <ContentApproval/>
-// return <PostScheduler/>
-// return <AddTeamMember/>
-// return <AddService/>
-// return <DeleteService/>
-// return <EditService/>
-// return <BookFreeCall/>
+    return (
+    <>
+ < Login/>
+ <Registration/>
+ <ContactUs/>
+ <Feedback/>
+ <CompaignCreation/>
+ <ContentApproval/>
+ <PostScheduler/>
+ <AddTeamMember/>
+<AddService/>
+ <DeleteService/>
+<EditService/>
+ <BookFreeCall/>
+</>
+   );
 }
 export default App;
