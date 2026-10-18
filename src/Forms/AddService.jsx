@@ -1,9 +1,23 @@
 import './Login.css';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import FormError from './FormError';
+import { addServiceSchema } from './formValidation';
 
 function AddService(){
+    const {
+      register,
+      handleSubmit,
+      formState: { errors },
+    } = useForm({ resolver: zodResolver(addServiceSchema) });
+
+    function submitService(data) {
+      console.log('Service submitted.', data);
+    }
+
     return(
         <>
-        <form>
+        <form noValidate onSubmit={handleSubmit(submitService)}>
             
             <div className="d-flex justify-content-center align-items-center" style={{minHeight: "100vh"}}>
  <div className="card p-4 login-card" style={{maxWidth: "420px", width: "100%"}}>
@@ -15,36 +29,40 @@ function AddService(){
 {/* Service Name */}
 <div className="mb-3">
   <label htmlFor="serviceName" className="form-label">Service Name</label>
-  <input type="text" className="form-control" id="serviceName" placeholder="e.g. AI Lead Generation"/>
+  <input type="text" className="form-control" id="serviceName" placeholder="e.g. AI Lead Generation" {...register('serviceName')}/>
+  <FormError error={errors.serviceName}/>
 </div>
 
 {/* Category */}
 <div className="mb-3">
   <label htmlFor="category" className="form-label">Category</label>
-  <select className="form-select" id="category">
+  <select className="form-select" id="category" {...register('category')}>
     <option value="">Select Category</option>
     <option value="lead-generation">Lead Generation</option>
     <option value="sales-automation">Sales Automation</option>
     <option value="marketing-automation">Marketing Automation</option>
     <option value="customer-support">Customer Support</option>
   </select>
+  <FormError error={errors.category}/>
 </div>
 
 {/* Description */}
 <div className="mb-3">
   <label htmlFor="serviceDescription" className="form-label">Service Description</label>
-  <textarea className="form-control" id="serviceDescription" rows="4" placeholder="Describe what this service offers..."></textarea>
+  <textarea className="form-control" id="serviceDescription" rows="4" placeholder="Describe what this service offers..." {...register('serviceDescription')}></textarea>
+  <FormError error={errors.serviceDescription}/>
 </div>
 
 {/* Price */}
 <div className="mb-3">
   <label htmlFor="price" className="form-label">Starting Price</label>
-  <input type="number" className="form-control" id="price" placeholder="Enter price in USD"/>
+  <input type="number" className="form-control" id="price" placeholder="Enter price in USD" {...register('price')}/>
+  <FormError error={errors.price}/>
 </div>
 
 {/* Active checkbox */}
 <div className="mb-3 form-check">
-  <input type="checkbox" className="form-check-input" id="isActive"/>
+  <input type="checkbox" className="form-check-input" id="isActive" {...register('isActive')}/>
   <label className="form-check-label" htmlFor="isActive">Make this service active on the website</label>
 </div>
 

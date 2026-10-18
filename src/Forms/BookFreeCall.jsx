@@ -1,9 +1,23 @@
 import './Login.css';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import FormError from './FormError';
+import { bookFreeCallSchema } from './formValidation';
 
 function BookFreeCall(){
+    const {
+      register,
+      handleSubmit,
+      formState: { errors },
+    } = useForm({ resolver: zodResolver(bookFreeCallSchema) });
+
+    function submitCallRequest(data) {
+      console.log('Free call request submitted.', data);
+    }
+
     return(
         <>
-        <form>
+        <form noValidate onSubmit={handleSubmit(submitCallRequest)}>
             
             <div className="d-flex justify-content-center align-items-center" style={{minHeight: "100vh"}}>
  <div className="card p-4 login-card" style={{maxWidth: "420px", width: "100%"}}>
@@ -15,37 +29,43 @@ function BookFreeCall(){
 {/* Full Name */}
 <div className="mb-3">
   <label htmlFor="fullName" className="form-label">Full Name</label>
-  <input type="text" className="form-control" id="fullName" placeholder="Full Name"/>
+  <input type="text" className="form-control" id="fullName" placeholder="Full Name" {...register('fullName')}/>
+  <FormError error={errors.fullName}/>
 </div>
 
 {/* Email */}
 <div className="mb-3">
   <label htmlFor="email" className="form-label">Email address</label>
-  <input type="email" className="form-control" id="email" placeholder="Email"/>
+  <input type="email" className="form-control" id="email" placeholder="Email" {...register('email')}/>
+  <FormError error={errors.email}/>
 </div>
 
 {/* Phone */}
 <div className="mb-3">
   <label htmlFor="phone" className="form-label">Phone / WhatsApp</label>
-  <input type="tel" className="form-control" id="phone" placeholder="Phone / WhatsApp"/>
+  <input type="tel" className="form-control" id="phone" placeholder="Phone / WhatsApp" {...register('phone')}/>
+  <FormError error={errors.phone}/>
 </div>
 
 {/* Preferred Date */}
 <div className="mb-3">
   <label htmlFor="preferredDate" className="form-label">Preferred Date</label>
-  <input type="date" className="form-control" id="preferredDate"/>
+  <input type="date" className="form-control" id="preferredDate" {...register('preferredDate')}/>
+  <FormError error={errors.preferredDate}/>
 </div>
 
 {/* Preferred Time */}
 <div className="mb-3">
   <label htmlFor="preferredTime" className="form-label">Preferred Time</label>
-  <input type="time" className="form-control" id="preferredTime"/>
+  <input type="time" className="form-control" id="preferredTime" {...register('preferredTime')}/>
+  <FormError error={errors.preferredTime}/>
 </div>
 
 {/* Message */}
 <div className="mb-3">
   <label htmlFor="message" className="form-label">What do you need help with?</label>
-  <textarea className="form-control" id="message" rows="3" placeholder="Briefly describe your business needs..."></textarea>
+  <textarea className="form-control" id="message" rows="3" placeholder="Briefly describe your business needs..." {...register('message')}></textarea>
+  <FormError error={errors.message}/>
 </div>
 
 {/* Button */}
