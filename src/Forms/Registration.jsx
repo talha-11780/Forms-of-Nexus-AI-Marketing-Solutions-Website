@@ -1,23 +1,37 @@
 import './Login.css';
-import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import FormError from './FormError';
-import { registrationSchema } from './formValidation';
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
+
+const registrationSchema = z.object({
+  fullName: z.string().min(2, 'Full Name must be at least 2 characters'),
+  exampleInputEmail1: z.email('Enter a valid email address'),
+  phone: z.string().min(1, 'Phone / WhatsApp is required'),
+  industry: z.string().min(1, 'Please select your industry'),
+  exampleInputPassword1: z.string().min(8, 'Password must be at least 8 characters'),
+  confirmPassword: z.string().min(1, 'Please confirm your password'),
+  exampleCheck1: z.boolean(),
+}).refine((data) => data.exampleInputPassword1 === data.confirmPassword, {
+  message: 'Passwords do not match',
+  path: ['confirmPassword'],
+});
 
 function Registration(){
     const {
-      register,
-      handleSubmit,
-      formState: { errors },
-    } = useForm({ resolver: zodResolver(registrationSchema) });
+        register,
+        handleSubmit,
+        formState: { errors },
+    } = useForm({
+        resolver: zodResolver(registrationSchema),
+    });
 
-    function submitRegistration(data) {
-      console.log('Registration form submitted.', data);
+    function myFormSubmissionFunction(data) {
+        console.log('Form submitted.', data);
     }
 
     return(
         <>
-        <form noValidate onSubmit={handleSubmit(submitRegistration)}>
+        <form onSubmit={handleSubmit(myFormSubmissionFunction)}>
             
             <div className="d-flex justify-content-center align-items-center" style={{minHeight: "100vh"}}>
  <div className="card p-4 login-card" style={{maxWidth: "420px", width: "100%"}}>
@@ -30,22 +44,22 @@ function Registration(){
 <div className="mb-3">
   <label htmlFor="fullName" className="form-label">Full Name</label>
   <input type="text" className="form-control" id="fullName" placeholder="Full Name" {...register('fullName')}/>
-  <FormError error={errors.fullName}/>
+  {errors.fullName && <span className="text-danger">{errors.fullName.message}</span>}
 </div>
 
 {/* Email */}
   <div className="mb-3">
   <label htmlFor="exampleInputEmail1" className="form-label">Email address</label>
-  <input type="email" className="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" {...register('email')}/>
+  <input type="email" className="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" {...register('exampleInputEmail1')}/>
+  {errors.exampleInputEmail1 && <span className="text-danger">{errors.exampleInputEmail1.message}</span>}
   <div id="emailHelp" className="form-text">We'll never share your email with anyone else.</div>
-  <FormError error={errors.email}/>
 </div>
 
 {/* Phone */}
 <div className="mb-3">
   <label htmlFor="phone" className="form-label">Phone / WhatsApp</label>
   <input type="tel" className="form-control" id="phone" placeholder="Phone / WhatsApp" {...register('phone')}/>
-  <FormError error={errors.phone}/>
+  {errors.phone && <span className="text-danger">{errors.phone.message}</span>}
 </div>
 
  {/* Industry dropdown */}
@@ -59,21 +73,21 @@ function Registration(){
     <option value="clinic">Clinics</option>
     <option value="other">Other</option>
   </select>
-  <FormError error={errors.industry}/>
+  {errors.industry && <span className="text-danger">{errors.industry.message}</span>}
 </div>
 
 {/* Pass */}
 <div className="mb-3">
   <label htmlFor="exampleInputPassword1" className="form-label">Password</label>
-  <input type="password" className="form-control" id="exampleInputPassword1" {...register('password')}/>
-  <FormError error={errors.password}/>
+  <input type="password" className="form-control" id="exampleInputPassword1" {...register('exampleInputPassword1')}/>
+  {errors.exampleInputPassword1 && <span className="text-danger">{errors.exampleInputPassword1.message}</span>}
 </div>
 
 {/* Confirm Password */}
 <div className="mb-3">
   <label htmlFor="confirmPassword" className="form-label">Confirm Password</label>
   <input type="password" className="form-control" id="confirmPassword" {...register('confirmPassword')}/>
-  <FormError error={errors.confirmPassword}/>
+  {errors.confirmPassword && <span className="text-danger">{errors.confirmPassword.message}</span>}
 </div>
 
 {/* Checkbox */}

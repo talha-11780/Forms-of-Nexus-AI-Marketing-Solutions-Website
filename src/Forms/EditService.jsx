@@ -1,23 +1,31 @@
 import './Login.css';
-import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import FormError from './FormError';
-import { editServiceSchema } from './formValidation';
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
+
+const editServiceSchema = z.object({
+  serviceSelect: z.string().min(1, 'Please select a service'),
+  serviceName: z.string().min(1, 'Service Name is required'),
+  serviceDescription: z.string().min(1, 'Service Description is required'),
+  price: z.number().positive('Price must be greater than 0'),
+});
 
 function EditService(){
     const {
-      register,
-      handleSubmit,
-      formState: { errors },
-    } = useForm({ resolver: zodResolver(editServiceSchema) });
+        register,
+        handleSubmit,
+        formState: { errors },
+    } = useForm({
+        resolver: zodResolver(editServiceSchema),
+    });
 
-    function submitServiceChanges(data) {
-      console.log('Service changes submitted.', data);
+    function myFormSubmissionFunction(data) {
+        console.log('Form submitted.', data);
     }
 
     return(
         <>
-        <form noValidate onSubmit={handleSubmit(submitServiceChanges)}>
+        <form onSubmit={handleSubmit(myFormSubmissionFunction)}>
             
             <div className="d-flex justify-content-center align-items-center" style={{minHeight: "100vh"}}>
  <div className="card p-4 login-card" style={{maxWidth: "420px", width: "100%"}}>
@@ -36,28 +44,28 @@ function EditService(){
     <option value="marketing-automation">AI Marketing Automation</option>
     <option value="customer-support">Customer Support Automation</option>
   </select>
-  <FormError error={errors.serviceSelect}/>
+  {errors.serviceSelect && <span className="text-danger">{errors.serviceSelect.message}</span>}
 </div>
 
 {/* Service Name */}
 <div className="mb-3">
   <label htmlFor="serviceName" className="form-label">Service Name</label>
   <input type="text" className="form-control" id="serviceName" placeholder="Update service name" {...register('serviceName')}/>
-  <FormError error={errors.serviceName}/>
+  {errors.serviceName && <span className="text-danger">{errors.serviceName.message}</span>}
 </div>
 
 {/* Description */}
 <div className="mb-3">
   <label htmlFor="serviceDescription" className="form-label">Service Description</label>
   <textarea className="form-control" id="serviceDescription" rows="4" placeholder="Update description..." {...register('serviceDescription')}></textarea>
-  <FormError error={errors.serviceDescription}/>
+  {errors.serviceDescription && <span className="text-danger">{errors.serviceDescription.message}</span>}
 </div>
 
 {/* Price */}
 <div className="mb-3">
   <label htmlFor="price" className="form-label">Starting Price</label>
-  <input type="number" className="form-control" id="price" placeholder="Update price in USD" {...register('price')}/>
-  <FormError error={errors.price}/>
+  <input type="number" className="form-control" id="price" placeholder="Update price in USD" {...register('price', { valueAsNumber: true })}/>
+  {errors.price && <span className="text-danger">{errors.price.message}</span>}
 </div>
 
 {/* Button */}

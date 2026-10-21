@@ -1,23 +1,31 @@
 import './Login.css';
-import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import FormError from './FormError';
-import { postSchedulerSchema } from './formValidation';
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
+
+const postSchema = z.object({
+  caption: z.string().min(1, 'Post Caption is required'),
+  platform: z.string().min(1, 'Platform is required'),
+  postDate: z.string().min(1, 'Date & Time to Post is required'),
+  addToQueue: z.boolean(),
+});
 
 function PostScheduler(){
     const {
-      register,
-      handleSubmit,
-      formState: { errors },
-    } = useForm({ resolver: zodResolver(postSchedulerSchema) });
+        register,
+        handleSubmit,
+        formState: { errors },
+    } = useForm({
+        resolver: zodResolver(postSchema),
+    });
 
-    function submitScheduledPost(data) {
-      console.log('Scheduled post submitted.', data);
+    function myFormSubmissionFunction(data) {
+        console.log('Form submitted.', data);
     }
 
     return(
         <>
-        <form noValidate onSubmit={handleSubmit(submitScheduledPost)}>
+        <form onSubmit={handleSubmit(myFormSubmissionFunction)}>
             
             <div className="d-flex justify-content-center align-items-center" style={{minHeight: "100vh"}}>
  <div className="card p-4 login-card" style={{maxWidth: "420px", width: "100%"}}>
@@ -30,7 +38,7 @@ function PostScheduler(){
 <div className="mb-3">
   <label htmlFor="caption" className="form-label">Post Caption</label>
   <textarea className="form-control" id="caption" rows="4" placeholder="Write your post caption..." {...register('caption')}></textarea>
-  <FormError error={errors.caption}/>
+  {errors.caption && <span className="text-danger">{errors.caption.message}</span>}
 </div>
 
 {/* Platform */}
@@ -43,14 +51,14 @@ function PostScheduler(){
     <option value="linkedin">LinkedIn</option>
     <option value="twitter">Twitter</option>
   </select>
-  <FormError error={errors.platform}/>
+  {errors.platform && <span className="text-danger">{errors.platform.message}</span>}
 </div>
 
 {/* Date & Time */}
 <div className="mb-3">
   <label htmlFor="postDate" className="form-label">Date & Time to Post</label>
   <input type="datetime-local" className="form-control" id="postDate" {...register('postDate')}/>
-  <FormError error={errors.postDate}/>
+  {errors.postDate && <span className="text-danger">{errors.postDate.message}</span>}
 </div>
 
 {/* Queue checkbox */}

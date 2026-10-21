@@ -1,23 +1,32 @@
 import './Login.css';
-import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import FormError from './FormError';
-import { campaignCreationSchema } from './formValidation';
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
+
+const campaignSchema = z.object({
+  campaignName: z.string().min(1, 'Campaign Name is required'),
+  platform: z.string().min(1, 'Platform is required'),
+  startDate: z.string().min(1, 'Start Date is required'),
+  budget: z.number().positive('Budget must be greater than 0'),
+  goal: z.string().min(1, 'Campaign Goal is required'),
+});
 
 function CampaignCreation(){
     const {
-      register,
-      handleSubmit,
-      formState: { errors },
-    } = useForm({ resolver: zodResolver(campaignCreationSchema) });
+        register,
+        handleSubmit,
+        formState: { errors },
+    } = useForm({
+        resolver: zodResolver(campaignSchema),
+    });
 
-    function submitCampaign(data) {
-      console.log('Campaign submitted.', data);
+    function myFormSubmissionFunction(data) {
+        console.log('Form submitted.', data);
     }
 
     return(
         <>
-        <form noValidate onSubmit={handleSubmit(submitCampaign)}>
+        <form onSubmit={handleSubmit(myFormSubmissionFunction)}>
             
             <div className="d-flex justify-content-center align-items-center" style={{minHeight: "100vh"}}>
  <div className="card p-4 login-card" style={{maxWidth: "420px", width: "100%"}}>
@@ -30,7 +39,7 @@ function CampaignCreation(){
 <div className="mb-3">
   <label htmlFor="campaignName" className="form-label">Campaign Name</label>
   <input type="text" className="form-control" id="campaignName" placeholder="Campaign Name" {...register('campaignName')}/>
-  <FormError error={errors.campaignName}/>
+  {errors.campaignName && <span className="text-danger">{errors.campaignName.message}</span>}
 </div>
 
 {/* Platform */}
@@ -43,28 +52,28 @@ function CampaignCreation(){
     <option value="google-ads">Google Ads</option>
     <option value="linkedin">LinkedIn</option>
   </select>
-  <FormError error={errors.platform}/>
+  {errors.platform && <span className="text-danger">{errors.platform.message}</span>}
 </div>
 
 {/* Start Date */}
 <div className="mb-3">
   <label htmlFor="startDate" className="form-label">Start Date</label>
   <input type="date" className="form-control" id="startDate" {...register('startDate')}/>
-  <FormError error={errors.startDate}/>
+  {errors.startDate && <span className="text-danger">{errors.startDate.message}</span>}
 </div>
 
 {/* Budget */}
 <div className="mb-3">
   <label htmlFor="budget" className="form-label">Budget</label>
-  <input type="number" className="form-control" id="budget" placeholder="Enter budget in USD" {...register('budget')}/>
-  <FormError error={errors.budget}/>
+  <input type="number" className="form-control" id="budget" placeholder="Enter budget in USD" {...register('budget', { valueAsNumber: true })}/>
+  {errors.budget && <span className="text-danger">{errors.budget.message}</span>}
 </div>
 
 {/* Campaign Goal */}
 <div className="mb-3">
   <label htmlFor="goal" className="form-label">Campaign Goal</label>
   <textarea className="form-control" id="goal" rows="4" placeholder="Describe the goal of this campaign..." {...register('goal')}></textarea>
-  <FormError error={errors.goal}/>
+  {errors.goal && <span className="text-danger">{errors.goal.message}</span>}
 </div>
 
 {/* Button */}

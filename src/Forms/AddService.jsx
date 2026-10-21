@@ -1,23 +1,32 @@
 import './Login.css';
-import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import FormError from './FormError';
-import { addServiceSchema } from './formValidation';
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
+
+const serviceSchema = z.object({
+  serviceName: z.string().min(1, 'Service Name is required'),
+  category: z.string().min(1, 'Category is required'),
+  serviceDescription: z.string().min(1, 'Service Description is required'),
+  price: z.number().positive('Price must be greater than 0'),
+  isActive: z.boolean(),
+});
 
 function AddService(){
     const {
-      register,
-      handleSubmit,
-      formState: { errors },
-    } = useForm({ resolver: zodResolver(addServiceSchema) });
+        register,
+        handleSubmit,
+        formState: { errors },
+    } = useForm({
+        resolver: zodResolver(serviceSchema),
+    });
 
-    function submitService(data) {
-      console.log('Service submitted.', data);
+    function myFormSubmissionFunction(data) {
+        console.log('Form submitted.', data);
     }
 
     return(
         <>
-        <form noValidate onSubmit={handleSubmit(submitService)}>
+        <form onSubmit={handleSubmit(myFormSubmissionFunction)}>
             
             <div className="d-flex justify-content-center align-items-center" style={{minHeight: "100vh"}}>
  <div className="card p-4 login-card" style={{maxWidth: "420px", width: "100%"}}>
@@ -30,7 +39,7 @@ function AddService(){
 <div className="mb-3">
   <label htmlFor="serviceName" className="form-label">Service Name</label>
   <input type="text" className="form-control" id="serviceName" placeholder="e.g. AI Lead Generation" {...register('serviceName')}/>
-  <FormError error={errors.serviceName}/>
+  {errors.serviceName && <span className="text-danger">{errors.serviceName.message}</span>}
 </div>
 
 {/* Category */}
@@ -43,21 +52,21 @@ function AddService(){
     <option value="marketing-automation">Marketing Automation</option>
     <option value="customer-support">Customer Support</option>
   </select>
-  <FormError error={errors.category}/>
+  {errors.category && <span className="text-danger">{errors.category.message}</span>}
 </div>
 
 {/* Description */}
 <div className="mb-3">
   <label htmlFor="serviceDescription" className="form-label">Service Description</label>
   <textarea className="form-control" id="serviceDescription" rows="4" placeholder="Describe what this service offers..." {...register('serviceDescription')}></textarea>
-  <FormError error={errors.serviceDescription}/>
+  {errors.serviceDescription && <span className="text-danger">{errors.serviceDescription.message}</span>}
 </div>
 
 {/* Price */}
 <div className="mb-3">
   <label htmlFor="price" className="form-label">Starting Price</label>
-  <input type="number" className="form-control" id="price" placeholder="Enter price in USD" {...register('price')}/>
-  <FormError error={errors.price}/>
+  <input type="number" className="form-control" id="price" placeholder="Enter price in USD" {...register('price', { valueAsNumber: true })}/>
+  {errors.price && <span className="text-danger">{errors.price.message}</span>}
 </div>
 
 {/* Active checkbox */}

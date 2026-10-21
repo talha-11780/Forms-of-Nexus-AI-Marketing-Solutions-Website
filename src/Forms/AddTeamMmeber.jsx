@@ -1,23 +1,30 @@
 import './Login.css';
-import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import FormError from './FormError';
-import { addTeamMemberSchema } from './formValidation';
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
+
+const teamMemberSchema = z.object({
+  memberName: z.string().min(2, 'Full Name must be at least 2 characters'),
+  memberEmail: z.email('Enter a valid email address'),
+  role: z.string().min(1, 'Role is required'),
+});
 
 function AddTeamMember(){
     const {
-      register,
-      handleSubmit,
-      formState: { errors },
-    } = useForm({ resolver: zodResolver(addTeamMemberSchema) });
+        register,
+        handleSubmit,
+        formState: { errors },
+    } = useForm({
+        resolver: zodResolver(teamMemberSchema),
+    });
 
-    function submitTeamMember(data) {
-      console.log('Team member submitted.', data);
+    function myFormSubmissionFunction(data) {
+        console.log('Form submitted.', data);
     }
 
     return(
         <>
-        <form noValidate onSubmit={handleSubmit(submitTeamMember)}>
+        <form onSubmit={handleSubmit(myFormSubmissionFunction)}>
             
             <div className="d-flex justify-content-center align-items-center" style={{minHeight: "100vh"}}>
  <div className="card p-4 login-card" style={{maxWidth: "420px", width: "100%"}}>
@@ -30,14 +37,14 @@ function AddTeamMember(){
 <div className="mb-3">
   <label htmlFor="memberName" className="form-label">Full Name</label>
   <input type="text" className="form-control" id="memberName" placeholder="Full Name" {...register('memberName')}/>
-  <FormError error={errors.memberName}/>
+  {errors.memberName && <span className="text-danger">{errors.memberName.message}</span>}
 </div>
 
 {/* Email */}
 <div className="mb-3">
   <label htmlFor="memberEmail" className="form-label">Email address</label>
   <input type="email" className="form-control" id="memberEmail" placeholder="Email" {...register('memberEmail')}/>
-  <FormError error={errors.memberEmail}/>
+  {errors.memberEmail && <span className="text-danger">{errors.memberEmail.message}</span>}
 </div>
 
 {/* Role */}
@@ -49,7 +56,7 @@ function AddTeamMember(){
     <option value="editor">Editor</option>
     <option value="viewer">Viewer</option>
   </select>
-  <FormError error={errors.role}/>
+  {errors.role && <span className="text-danger">{errors.role.message}</span>}
 </div>
 
 {/* Button */}

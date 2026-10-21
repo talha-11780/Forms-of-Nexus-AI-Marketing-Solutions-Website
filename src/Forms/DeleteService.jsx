@@ -1,23 +1,29 @@
 import './Login.css';
-import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import FormError from './FormError';
-import { deleteServiceSchema } from './formValidation';
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
+
+const deleteServiceSchema = z.object({
+  serviceSelect: z.string().min(1, 'Please select a service'),
+  confirmDelete: z.boolean().refine((value) => value, 'Please confirm that you want to delete this service'),
+});
 
 function DeleteService(){
     const {
-      register,
-      handleSubmit,
-      formState: { errors },
-    } = useForm({ resolver: zodResolver(deleteServiceSchema) });
+        register,
+        handleSubmit,
+        formState: { errors },
+    } = useForm({
+        resolver: zodResolver(deleteServiceSchema),
+    });
 
-    function submitServiceDeletion(data) {
-      console.log('Service deletion submitted.', data);
+    function myFormSubmissionFunction(data) {
+        console.log('Form submitted.', data);
     }
 
     return(
         <>
-        <form noValidate onSubmit={handleSubmit(submitServiceDeletion)}>
+        <form onSubmit={handleSubmit(myFormSubmissionFunction)}>
             
             <div className="d-flex justify-content-center align-items-center" style={{minHeight: "100vh"}}>
  <div className="card p-4 login-card" style={{maxWidth: "420px", width: "100%"}}>
@@ -36,14 +42,14 @@ function DeleteService(){
     <option value="marketing-automation">AI Marketing Automation</option>
     <option value="customer-support">Customer Support Automation</option>
   </select>
-  <FormError error={errors.serviceSelect}/>
+  {errors.serviceSelect && <span className="text-danger">{errors.serviceSelect.message}</span>}
 </div>
 
 {/* Confirm checkbox */}
 <div className="mb-3 form-check">
   <input type="checkbox" className="form-check-input" id="confirmDelete" {...register('confirmDelete')}/>
   <label className="form-check-label" htmlFor="confirmDelete">I confirm I want to permanently delete this service.</label>
-  <FormError error={errors.confirmDelete}/>
+  {errors.confirmDelete && <span className="text-danger d-block">{errors.confirmDelete.message}</span>}
 </div>
 
 {/* Button */}
