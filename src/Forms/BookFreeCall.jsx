@@ -6,7 +6,7 @@ import { z } from 'zod';
 const callSchema = z.object({
   fullName: z.string().min(6, 'Full Name must be at least 6 characters'),
   email: z.email('Enter a valid email address'),
-  phone: z.string().min(1, 'Phone / WhatsApp is required'),
+  phone: z.string().min(11, 'Phone / WhatsApp must be at least 11 characters'),
 
 preferredDate: z.coerce.date({
   message: 'Preferred Date is required',
