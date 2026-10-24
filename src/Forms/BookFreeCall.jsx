@@ -4,7 +4,7 @@ import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
 const callSchema = z.object({
-  fullName: z.string().min(2, 'Full Name must be at least 2 characters'),
+  fullName: z.string().min(6, 'Full Name must be at least 6 characters'),
   email: z.email('Enter a valid email address'),
   phone: z.string().min(1, 'Phone / WhatsApp is required'),
 

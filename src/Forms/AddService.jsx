@@ -7,7 +7,7 @@ const serviceSchema = z.object({
   serviceName: z.string().min(1, 'Service Name is required'),
   category: z.string().min(1, 'Category is required'),
   serviceDescription: z.string().min(1, 'Service Description is required'),
-  price: z.number().positive('Price must be greater than 0'),
+  price: z.number({ error: 'Price is required' }).positive('Price must be greater than 0'),
   isActive: z.boolean(),
 });
 
