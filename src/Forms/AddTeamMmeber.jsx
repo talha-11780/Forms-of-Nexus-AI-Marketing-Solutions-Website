@@ -4,7 +4,7 @@ import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
 const teamMemberSchema = z.object({
-  memberName: z.string().min(2, 'Full Name must be at least 2 characters'),
+  memberName: z.string().min(6, 'Full Name must be at least 6 characters'),
   memberEmail: z.email('Enter a valid email address'),
   role: z.string().min(1, 'Role is required'),
 });
