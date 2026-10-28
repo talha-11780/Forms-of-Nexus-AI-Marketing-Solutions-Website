@@ -4,10 +4,12 @@ import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
 const contentApprovalSchema = z.object({
-  contentTitle: z.string().min(1, 'Content Title is required'),
-  contentType: z.string().min(1, 'Content Type is required'),
+  contentTitle: z.string().trim().min(3, 'Content Title must be at least 3 characters').max(100),
+  contentType: z.enum(['blog-post', 'social-media-post', 'email', 'ad-copy'], {
+    error: 'Please select a content type',
+  }),
   contentLink: z.url('Enter a valid content URL'),
-  notes: z.string().min(1, 'Notes for Reviewer are required'),
+  notes: z.string().trim().min(10, 'Notes must be at least 10 characters').max(500),
 });
 
 function ContentApproval(){

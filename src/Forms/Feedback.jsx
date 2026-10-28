@@ -3,11 +3,28 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
+const ratings = ['poor', 'average', 'good', 'excellent'];
+
 const feedbackSchema = z.object({
-  fullName: z.string().min(2, 'Full Name must be at least 2 characters'),
-  email: z.email('Enter a valid email address'),
-  rating: z.string().min(1, 'Please select a rating'),
-  feedback: z.string().min(1, 'Your Feedback is required'),
+  fullName: z
+    .string()
+    .trim()
+    .min(2, 'Full Name must be at least 2 characters')
+    .max(60, 'Full Name is too long'),
+
+  email: z
+    .email('Enter a valid email address')
+    .max(254, 'Email is too long'),
+
+  rating: z.enum(ratings, {
+    error: 'Please select a rating',
+  }),
+
+  feedback: z
+    .string()
+    .trim()
+    .min(10, 'Feedback must be at least 10 characters')
+    .max(1000, 'Feedback cannot exceed 1000 characters'),
 });
 
 function Feedback(){

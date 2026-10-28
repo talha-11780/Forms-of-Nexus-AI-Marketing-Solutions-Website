@@ -4,9 +4,11 @@ import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
 const postSchema = z.object({
-  caption: z.string().min(1, 'Post Caption is required'),
-  platform: z.string().min(1, 'Platform is required'),
-  postDate: z.string().min(1, 'Date & Time to Post is required'),
+  caption: z.string().trim().min(3, 'Caption must be at least 3 characters').max(500),
+  platform: z.enum(['facebook', 'instagram', 'linkedin', 'twitter'], {
+    error: 'Please select a platform',
+  }),
+  postDate: z.coerce.date({ error: 'Date & Time to Post is required' }),
   addToQueue: z.boolean(),
 });
 

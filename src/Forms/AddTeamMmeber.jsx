@@ -4,9 +4,11 @@ import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
 const teamMemberSchema = z.object({
-  memberName: z.string().min(6, 'Full Name must be at least 6 characters'),
+  memberName: z.string().trim().min(2, 'Full Name must be at least 2 characters').max(60),
   memberEmail: z.email('Enter a valid email address'),
-  role: z.string().min(1, 'Role is required'),
+  role: z.enum(['admin', 'editor', 'viewer'], {
+    error: 'Please select a role',
+  }),
 });
 
 function AddTeamMember(){

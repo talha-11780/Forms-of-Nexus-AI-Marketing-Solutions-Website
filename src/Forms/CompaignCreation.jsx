@@ -4,11 +4,16 @@ import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
 const campaignSchema = z.object({
-  campaignName: z.string().min(1, 'Campaign Name is required'),
-  platform: z.string().min(1, 'Platform is required'),
-  startDate: z.string().min(1, 'Start Date is required'),
-  budget: z.number().positive('Budget must be greater than 0'),
-  goal: z.string().min(1, 'Campaign Goal is required'),
+  campaignName: z.string().trim().min(3, 'Campaign Name must be at least 3 characters').max(100),
+  platform: z.enum(['facebook', 'instagram', 'google-ads', 'linkedin'], {
+    error: 'Please select a platform',
+  }),
+  startDate: z.coerce.date({ error: 'Start Date is required' }),
+  budget: z
+    .number({ error: 'Budget is required' })
+    .positive('Budget must be greater than 0')
+    .max(10000000, 'Budget is too high'),
+  goal: z.string().trim().min(10, 'Goal must be at least 10 characters').max(500),
 });
 
 function CampaignCreation(){

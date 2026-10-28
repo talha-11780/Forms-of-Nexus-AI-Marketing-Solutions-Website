@@ -3,11 +3,34 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
+const categories = [
+  'lead-generation',
+  'sales-automation',
+  'marketing-automation',
+  'customer-support',
+];
+
 const serviceSchema = z.object({
-  serviceName: z.string().min(1, 'Service Name is required'),
-  category: z.string().min(1, 'Category is required'),
-  serviceDescription: z.string().min(1, 'Service Description is required'),
-  price: z.number({ error: 'Price is required' }).positive('Price must be greater than 0'),
+  serviceName: z
+    .string()
+    .trim()
+    .min(3, 'Service name must be at least 3 characters')
+    .max(100, 'Service name is too long'),
+
+  category: z.enum(categories, {
+    error: 'Please select a category',
+  }),
+
+  serviceDescription: z
+    .string()
+    .trim()
+    .min(10, 'Description must be at least 10 characters')
+    .max(500, 'Description cannot exceed 500 characters'),
+
+  price: z
+    .number({ error: 'Price is required' })
+    .positive('Price must be greater than 0'),
+
   isActive: z.boolean(),
 });
 

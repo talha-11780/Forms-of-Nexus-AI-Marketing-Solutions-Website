@@ -4,16 +4,11 @@ import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
 const callSchema = z.object({
-  fullName: z.string().min(6, 'Full Name must be at least 6 characters'),
+  fullName: z.string().trim().min(2, 'Full Name must be at least 2 characters').max(60),
   email: z.email('Enter a valid email address'),
-  phone: z.string().min(11, 'Phone / WhatsApp must be at least 11 characters'),
-
-preferredDate: z.coerce.date({
-  message: 'Preferred Date is required',
-}),
-preferredTime: z.string().min(1, 'Preferred Time is required'),
-
-  message: z.string().min(1, 'Please describe what you need help with'),
+  phone: z.string().min(10, 'Enter a valid phone number').max(15),
+  preferredDateTime: z.coerce.date({ error: 'Preferred Date & Time is required' }),
+  message: z.string().trim().min(10, 'Please describe your need').max(500),
 });
 
 function BookFreeCall(){
@@ -61,18 +56,11 @@ function BookFreeCall(){
   {errors.phone && <span className="text-danger">{errors.phone.message}</span>}
 </div>
 
-{/* Preferred Date */}
+{/* Preferred Date & Time */}
 <div className="mb-3">
-  <label htmlFor="preferredDate" className="form-label">Preferred Date</label>
-  <input type="date" className="form-control" id="preferredDate" {...register('preferredDate')}/>
-  {errors.preferredDate && <span className="text-danger">{errors.preferredDate.message}</span>}
-</div>
-
-{/* Preferred Time */}
-<div className="mb-3">
-  <label htmlFor="preferredTime" className="form-label">Preferred Time</label>
-  <input type="time" className="form-control" id="preferredTime" {...register('preferredTime')}/>
-  {errors.preferredTime && <span className="text-danger">{errors.preferredTime.message}</span>}
+  <label htmlFor="preferredDateTime" className="form-label">Preferred Date & Time</label>
+  <input type="datetime-local" className="form-control" id="preferredDateTime" {...register('preferredDateTime')}/>
+  {errors.preferredDateTime && <span className="text-danger">{errors.preferredDateTime.message}</span>}
 </div>
 
 {/* Message */}

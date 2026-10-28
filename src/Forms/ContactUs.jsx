@@ -4,13 +4,16 @@ import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
 const contactSchema = z.object({
-  fullName: z.string().min(6, 'Full Name must be at least 6 characters'),
+  fullName: z.string().trim().min(2, 'Full Name must be at least 2 characters').max(60),
   exampleInputEmail1: z.email('Enter a valid email address'),
-  phone: z.string().min(11, 'Phone / WhatsApp must be at least 11 characters'),
+  phone: z.string().min(10, 'Enter a valid phone number').max(15),
   website: z.url('Enter a valid website URL'),
-  services: z.string().min(1, 'Please select a service'),
-  query: z.string().min(1, 'Your Query is required'),
-  confirmContact: z.boolean().refine((value) => value, 'Please confirm that we may contact you'),
+  services: z.enum(
+    ['lead-generation', 'sales-automation', 'customer-support', 'marketing-automation', 'business-process', 'local-growth', 'other'],
+    { error: 'Please select a service' }
+  ),
+  query: z.string().trim().min(10, 'Query must be at least 10 characters').max(1000),
+  confirmContact: z.boolean().refine((v) => v, 'Please confirm that we may contact you'),
 });
 
 function ContactUs(){

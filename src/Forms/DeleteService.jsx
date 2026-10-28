@@ -3,9 +3,20 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
+const serviceOptions = [
+  'lead-generation',
+  'sales-automation',
+  'marketing-automation',
+  'customer-support',
+];
+
 const deleteServiceSchema = z.object({
-  serviceSelect: z.string().min(1, 'Please select a service'),
-  confirmDelete: z.boolean().refine((value) => value, 'Please confirm that you want to delete this service'),
+  serviceSelect: z.enum(serviceOptions, {
+    error: 'Please select a service',
+  }),
+  confirmDelete: z
+    .boolean()
+    .refine((value) => value, 'Please confirm that you want to delete this service'),
 });
 
 function DeleteService(){

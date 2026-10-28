@@ -4,11 +4,13 @@ import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
 const registrationSchema = z.object({
-  fullName: z.string().min(2, 'Full Name must be at least 2 characters'),
+  fullName: z.string().trim().min(2, 'Full Name must be at least 2 characters').max(60),
   exampleInputEmail1: z.email('Enter a valid email address'),
-  phone: z.string().min(1, 'Phone / WhatsApp is required'),
-  industry: z.string().min(1, 'Please select your industry'),
-  exampleInputPassword1: z.string().min(8, 'Password must be at least 8 characters'),
+  phone: z.string().min(10, 'Enter a valid phone number').max(15),
+  industry: z.enum(['ecommerce', 'real-estate', 'consulting', 'clinic', 'other'], {
+    error: 'Please select your industry',
+  }),
+  exampleInputPassword1: z.string().min(8, 'Password must be at least 8 characters').max(64),
   confirmPassword: z.string().min(1, 'Please confirm your password'),
   exampleCheck1: z.boolean(),
 }).refine((data) => data.exampleInputPassword1 === data.confirmPassword, {
