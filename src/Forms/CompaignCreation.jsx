@@ -2,6 +2,8 @@ import './Login.css';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
+import { CampaignAxiosFunction } from '../Services/API';
+import { useFormSubmission } from '../Services/useFormSubmission';
 
 const campaignSchema = z.object({
   campaignName: z.string().trim().min(3, 'Campaign Name must be at least 3 characters').max(100),
@@ -17,21 +19,18 @@ const campaignSchema = z.object({
 });
 
 function CampaignCreation(){
+    const { submissionMessage, submitForm } = useFormSubmission();
     const {
         register,
         handleSubmit,
-        formState: { errors },
+        formState: { errors, isSubmitting },
     } = useForm({
         resolver: zodResolver(campaignSchema),
     });
 
-    function myFormSubmissionFunction(data) {
-        console.log('Form submitted.', data);
-    }
-
     return(
         <>
-        <form onSubmit={handleSubmit(myFormSubmissionFunction)}>
+        <form onSubmit={handleSubmit((data) => submitForm(CampaignAxiosFunction, data, 'Campaign created successfully.'))}>
             
             <div className="d-flex justify-content-center align-items-center" style={{minHeight: "100vh"}}>
  <div className="card p-4 login-card" style={{maxWidth: "420px", width: "100%"}}>
@@ -82,7 +81,8 @@ function CampaignCreation(){
 </div>
 
 {/* Button */}
-<button type="submit" className="btn login-btn">Create Campaign</button>
+<button type="submit" className="btn login-btn" disabled={isSubmitting}>{isSubmitting ? 'Submitting...' : 'Create Campaign'}</button>
+{submissionMessage && <p role="status" className="mt-3 mb-0">{submissionMessage}</p>}
   </div>
   </div>
 </form>

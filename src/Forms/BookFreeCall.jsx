@@ -2,6 +2,8 @@ import './Login.css';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
+import { CallBookingAxiosFunction } from '../Services/API';
+import { useFormSubmission } from '../Services/useFormSubmission';
 
 const callSchema = z.object({
   fullName: z.string().trim().min(2, 'Full Name must be at least 2 characters').max(60),
@@ -12,21 +14,18 @@ const callSchema = z.object({
 });
 
 function BookFreeCall(){
+    const { submissionMessage, submitForm } = useFormSubmission();
     const {
         register,
         handleSubmit,
-        formState: { errors },
+        formState: { errors, isSubmitting },
     } = useForm({
         resolver: zodResolver(callSchema),
     });
 
-    function myFormSubmissionFunction(data) {
-        console.log('Form submitted.', data);
-    }
-
     return(
         <>
-        <form onSubmit={handleSubmit(myFormSubmissionFunction)}>
+        <form onSubmit={handleSubmit((data) => submitForm(CallBookingAxiosFunction, data, 'Call booking submitted successfully.'))}>
             
             <div className="d-flex justify-content-center align-items-center" style={{minHeight: "100vh"}}>
  <div className="card p-4 login-card" style={{maxWidth: "420px", width: "100%"}}>
@@ -71,7 +70,8 @@ function BookFreeCall(){
 </div>
 
 {/* Button */}
-<button type="submit" className="btn login-btn">Book Free Call</button>
+<button type="submit" className="btn login-btn" disabled={isSubmitting}>{isSubmitting ? 'Submitting...' : 'Book Free Call'}</button>
+{submissionMessage && <p role="status" className="mt-3 mb-0">{submissionMessage}</p>}
   </div>
   </div>
 </form>

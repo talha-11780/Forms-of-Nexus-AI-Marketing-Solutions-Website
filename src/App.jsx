@@ -1,6 +1,7 @@
 import { createBrowserRouter } from "react-router-dom";
 import LandingPage from "./landing/LandingPage.jsx";
 import SiteLayout from "./navigation/SiteLayout.jsx";
+import AdminOnly from "./navigation/AdminOnly.jsx";
 import Login from "./Forms/login.jsx";
 import Registration from "./Forms/Registration.jsx";
 import ContactUs from "./Forms/ContactUs.jsx";
@@ -22,9 +23,9 @@ export const router = createBrowserRouter([
     element: <SiteLayout />,
     children: [
       { path: "/", element: <LandingPage /> },
-      { path: "/admin", element: <AdminMenu /> },
+      { path: "/admin", element: <AdminOnly><AdminMenu /></AdminOnly> },
       { path: "/customer", element: <CustomerMenu /> },
-      { path: "/marketing", element: <MarketingMenu /> },
+      { path: "/marketing", element: <AdminOnly><MarketingMenu /></AdminOnly> },
       { path: "/admin/login", element: <><AdminMenu /><Login /></> },
       { path: "/marketing/login", element: <><MarketingMenu /><Login /></> },
       { path: "/login", element: <Login /> },
@@ -36,13 +37,13 @@ export const router = createBrowserRouter([
       { path: "/customer/contact", element: <><CustomerMenu /><ContactUs /></> },
       { path: "/customer/feedback", element: <><CustomerMenu /><Feedback /></> },
       { path: "/customer/book-call", element: <><CustomerMenu /><BookFreeCall /></> },
-      { path: "/campaign", element: <><MarketingMenu /><CompaignCreation /></> },
-      { path: "/content-approval", element: <><MarketingMenu /><ContentApproval /></> },
-      { path: "/post-scheduler", element: <><MarketingMenu /><PostScheduler /></> },
-      { path: "/add-team-member", element: <><MarketingMenu /><AddTeamMember /></> },
-      { path: "/add-service", element: <><AdminMenu /><AddService /></> },
-      { path: "/delete-service", element: <><AdminMenu /><DeleteService /></> },
-      { path: "/edit-service", element: <><AdminMenu /><EditService /></> },
+      { path: "/campaign", element: <AdminOnly><><MarketingMenu /><CompaignCreation /></></AdminOnly> },
+      { path: "/content-approval", element: <AdminOnly><><MarketingMenu /><ContentApproval /></></AdminOnly> },
+      { path: "/post-scheduler", element: <AdminOnly><><MarketingMenu /><PostScheduler /></></AdminOnly> },
+      { path: "/add-team-member", element: <AdminOnly><><MarketingMenu /><AddTeamMember /></></AdminOnly> },
+      { path: "/add-service", element: <AdminOnly><><AdminMenu /><AddService /></></AdminOnly> },
+      { path: "/delete-service", element: <AdminOnly><><AdminMenu /><DeleteService /></></AdminOnly> },
+      { path: "/edit-service", element: <AdminOnly><><AdminMenu /><EditService /></></AdminOnly> },
       { path: "/book-call", element: <BookFreeCall /> },
     ],
   },

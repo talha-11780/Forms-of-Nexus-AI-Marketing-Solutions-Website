@@ -1,7 +1,10 @@
 import './Login.css';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
+import { useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { z } from 'zod';
+import { LoginAxiosFunction } from '../Services/API';
 
 const loginSchema = z.object({
   email: z.email('Enter a valid email address'),
@@ -10,21 +13,46 @@ const loginSchema = z.object({
 });
 
 function Login(){
+    const [submissionMessage, setSubmissionMessage] = useState('');
+    const navigate = useNavigate();
+    const location = useLocation();
     const {
         register,
         handleSubmit,
-        formState: { errors },
+        formState: { errors, isSubmitting },
     } = useForm({
         resolver: zodResolver(loginSchema),
     });
 
-    function myFormSubmissionFunction(data) {
-        console.log('Form submitted.', data);
+    async function onSubmit(data) {
+      setSubmissionMessage('');
+      try {
+        const response = await LoginAxiosFunction(data);
+        const restrictedLogin = location.pathname.startsWith('/admin/') ||
+          location.pathname.startsWith('/marketing/');
+        if (restrictedLogin && !response.data.isAdmin) {
+          setSubmissionMessage('This account does not have admin or marketing access.');
+          return;
+        }
+        sessionStorage.setItem('authToken', response.data.token);
+        sessionStorage.setItem('userAccess', response.data.isAdmin ? 'admin' : 'customer');
+        const destination = response.data.isAdmin
+          ? location.pathname.startsWith('/marketing/')
+            ? '/marketing'
+            : '/admin'
+          : '/customer';
+        navigate(destination, { replace: true });
+      } catch (error) {
+        const responseMessage = error.response?.data?.message;
+        setSubmissionMessage(
+          responseMessage || error.message || 'Login failed. Please try again.',
+        );
+      }
     }
 
     return(
         <>
-        <form onSubmit={handleSubmit(myFormSubmissionFunction)}>
+        <form onSubmit={handleSubmit(onSubmit)}>
             
             <div className="d-flex justify-content-center align-items-center" style={{minHeight: "100vh"}}>
  <div className="card p-4 login-card" style={{maxWidth: "420px", width: "100%"}}>
@@ -55,7 +83,8 @@ function Login(){
 </div>
 
 {/* Button */}
-<button type="submit" className="btn login-btn">Submit</button>
+<button type="submit" className="btn login-btn" disabled={isSubmitting}>{isSubmitting ? 'Submitting...' : 'Submit'}</button>
+{submissionMessage && <p role="status" className="mt-3 mb-0">{submissionMessage}</p>}
   </div>
   </div>
 </form>

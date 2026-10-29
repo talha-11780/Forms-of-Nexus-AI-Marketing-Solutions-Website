@@ -2,6 +2,8 @@ import './Login.css';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
+import { FeedbackAxiosFunction } from '../Services/API';
+import { useFormSubmission } from '../Services/useFormSubmission';
 
 const ratings = ['poor', 'average', 'good', 'excellent'];
 
@@ -28,21 +30,18 @@ const feedbackSchema = z.object({
 });
 
 function Feedback(){
+    const { submissionMessage, submitForm } = useFormSubmission();
     const {
         register,
         handleSubmit,
-        formState: { errors },
+        formState: { errors, isSubmitting },
     } = useForm({
         resolver: zodResolver(feedbackSchema),
     });
 
-    function myFormSubmissionFunction(data) {
-        console.log('Form submitted.', data);
-    }
-
     return(
         <>
-        <form onSubmit={handleSubmit(myFormSubmissionFunction)}>
+        <form onSubmit={handleSubmit((data) => submitForm(FeedbackAxiosFunction, data, 'Feedback submitted successfully.'))}>
             
             <div className="d-flex justify-content-center align-items-center" style={{minHeight: "100vh"}}>
  <div className="card p-4 login-card" style={{maxWidth: "420px", width: "100%"}}>
@@ -96,7 +95,8 @@ function Feedback(){
 </div>
 
 {/* Button */}
-<button type="submit" className="btn login-btn">Submit Feedback</button>
+<button type="submit" className="btn login-btn" disabled={isSubmitting}>{isSubmitting ? 'Submitting...' : 'Submit Feedback'}</button>
+{submissionMessage && <p role="status" className="mt-3 mb-0">{submissionMessage}</p>}
   </div>
   </div>
 </form>

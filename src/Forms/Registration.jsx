@@ -1,39 +1,60 @@
 import './Login.css';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
+import { useState } from 'react';
 import { z } from 'zod';
+import { RegistrationAxiosFunction } from '../Services/API';
 
 const registrationSchema = z.object({
   fullName: z.string().trim().min(2, 'Full Name must be at least 2 characters').max(60),
-  exampleInputEmail1: z.email('Enter a valid email address'),
+  email: z.email('Enter a valid email address'),
   phone: z.string().min(10, 'Enter a valid phone number').max(15),
   industry: z.enum(['ecommerce', 'real-estate', 'consulting', 'clinic', 'other'], {
     error: 'Please select your industry',
   }),
-  exampleInputPassword1: z.string().min(8, 'Password must be at least 8 characters').max(64),
+  password: z.string().min(8, 'Password must be at least 8 characters').max(64),
   confirmPassword: z.string().min(1, 'Please confirm your password'),
   exampleCheck1: z.boolean(),
-}).refine((data) => data.exampleInputPassword1 === data.confirmPassword, {
+}).refine((data) => data.password === data.confirmPassword, {
   message: 'Passwords do not match',
   path: ['confirmPassword'],
 });
 
 function Registration(){
+    const [submissionMessage, setSubmissionMessage] = useState('');
     const {
         register,
         handleSubmit,
-        formState: { errors },
+        formState: { errors, isSubmitting },
     } = useForm({
         resolver: zodResolver(registrationSchema),
     });
 
-    function myFormSubmissionFunction(data) {
-        console.log('Form submitted.', data);
+    async function onSubmit(data) {
+      setSubmissionMessage('');
+      try {
+        await RegistrationAxiosFunction({
+          fullName: data.fullName,
+          username: data.email,
+          email: data.email,
+          phone: data.phone,
+          industry: data.industry,
+          password: data.password,
+        });
+        setSubmissionMessage('Registration submitted successfully.');
+      } catch (error) {
+        const responseMessage = error?.response?.data;
+        setSubmissionMessage(
+          typeof responseMessage === 'string'
+            ? responseMessage
+            : error?.message || 'Registration failed. Please try again.',
+        );
+      }
     }
 
     return(
         <>
-        <form onSubmit={handleSubmit(myFormSubmissionFunction)}>
+        <form onSubmit={handleSubmit(onSubmit)}>
             
             <div className="d-flex justify-content-center align-items-center" style={{minHeight: "100vh"}}>
  <div className="card p-4 login-card" style={{maxWidth: "420px", width: "100%"}}>
@@ -52,8 +73,8 @@ function Registration(){
 {/* Email */}
   <div className="mb-3">
   <label htmlFor="exampleInputEmail1" className="form-label">Email address</label>
-  <input type="email" className="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" {...register('exampleInputEmail1')}/>
-  {errors.exampleInputEmail1 && <span className="text-danger">{errors.exampleInputEmail1.message}</span>}
+  <input type="email" className="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" {...register('email')}/>
+  {errors.email && <span className="text-danger">{errors.email.message}</span>}
   <div id="emailHelp" className="form-text">We'll never share your email with anyone else.</div>
 </div>
 
@@ -81,8 +102,8 @@ function Registration(){
 {/* Pass */}
 <div className="mb-3">
   <label htmlFor="exampleInputPassword1" className="form-label">Password</label>
-  <input type="password" className="form-control" id="exampleInputPassword1" {...register('exampleInputPassword1')}/>
-  {errors.exampleInputPassword1 && <span className="text-danger">{errors.exampleInputPassword1.message}</span>}
+  <input type="password" className="form-control" id="exampleInputPassword1" {...register('password')}/>
+  {errors.password && <span className="text-danger">{errors.password.message}</span>}
 </div>
 
 {/* Confirm Password */}
@@ -99,7 +120,10 @@ function Registration(){
 </div>
 
 {/* Button */}
-<button type="submit" className="btn login-btn">Submit</button>
+<button type="submit" className="btn login-btn" disabled={isSubmitting}>
+  {isSubmitting ? 'Submitting...' : 'Submit'}
+</button>
+{submissionMessage && <p role="status" className="mt-3 mb-0">{submissionMessage}</p>}
   </div>
   </div>
 </form>

@@ -2,6 +2,8 @@ import './Login.css';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
+import { ContentApprovalAxiosFunction } from '../Services/API';
+import { useFormSubmission } from '../Services/useFormSubmission';
 
 const contentApprovalSchema = z.object({
   contentTitle: z.string().trim().min(3, 'Content Title must be at least 3 characters').max(100),
@@ -13,21 +15,18 @@ const contentApprovalSchema = z.object({
 });
 
 function ContentApproval(){
+    const { submissionMessage, submitForm } = useFormSubmission();
     const {
         register,
         handleSubmit,
-        formState: { errors },
+        formState: { errors, isSubmitting },
     } = useForm({
         resolver: zodResolver(contentApprovalSchema),
     });
 
-    function myFormSubmissionFunction(data) {
-        console.log('Form submitted.', data);
-    }
-
     return(
         <>
-        <form onSubmit={handleSubmit(myFormSubmissionFunction)}>
+        <form onSubmit={handleSubmit((data) => submitForm(ContentApprovalAxiosFunction, data, 'Content sent for approval.'))}>
             
             <div className="d-flex justify-content-center align-items-center" style={{minHeight: "100vh"}}>
  <div className="card p-4 login-card" style={{maxWidth: "420px", width: "100%"}}>
@@ -71,7 +70,8 @@ function ContentApproval(){
 </div>
 
 {/* Button */}
-<button type="submit" className="btn login-btn">Send for Approval</button>
+<button type="submit" className="btn login-btn" disabled={isSubmitting}>{isSubmitting ? 'Submitting...' : 'Send for Approval'}</button>
+{submissionMessage && <p role="status" className="mt-3 mb-0">{submissionMessage}</p>}
   </div>
   </div>
 </form>

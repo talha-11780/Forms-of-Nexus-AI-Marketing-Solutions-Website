@@ -2,6 +2,8 @@ import './Login.css';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
+import { TeamMemberAxiosFunction } from '../Services/API';
+import { useFormSubmission } from '../Services/useFormSubmission';
 
 const teamMemberSchema = z.object({
   memberName: z.string().trim().min(2, 'Full Name must be at least 2 characters').max(60),
@@ -12,21 +14,18 @@ const teamMemberSchema = z.object({
 });
 
 function AddTeamMember(){
+    const { submissionMessage, submitForm } = useFormSubmission();
     const {
         register,
         handleSubmit,
-        formState: { errors },
+        formState: { errors, isSubmitting },
     } = useForm({
         resolver: zodResolver(teamMemberSchema),
     });
 
-    function myFormSubmissionFunction(data) {
-        console.log('Form submitted.', data);
-    }
-
     return(
         <>
-        <form onSubmit={handleSubmit(myFormSubmissionFunction)}>
+        <form onSubmit={handleSubmit((data) => submitForm(TeamMemberAxiosFunction, data, 'Team member added successfully.'))}>
             
             <div className="d-flex justify-content-center align-items-center" style={{minHeight: "100vh"}}>
  <div className="card p-4 login-card" style={{maxWidth: "420px", width: "100%"}}>
@@ -62,7 +61,8 @@ function AddTeamMember(){
 </div>
 
 {/* Button */}
-<button type="submit" className="btn login-btn">Add Team Member</button>
+<button type="submit" className="btn login-btn" disabled={isSubmitting}>{isSubmitting ? 'Submitting...' : 'Add Team Member'}</button>
+{submissionMessage && <p role="status" className="mt-3 mb-0">{submissionMessage}</p>}
   </div>
   </div>
 </form>
